@@ -1,0 +1,665 @@
+
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>three.js webgl - materials - cube reflection [cars]</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<style>
+			body {
+				background:#000;
+				color:#fff;
+				padding:0;
+				margin:0;
+				overflow:hidden;
+				font-family:georgia;
+				text-align:center;
+			}
+			a { color:skyblue; text-decoration:none }
+			#info {
+				position: absolute;
+				width: 100%;
+			}
+		</style>
+	</head>
+
+	<body>
+		
+		<script src="build/three.min.js"></script>
+		<script src="jsfiles/controls/OrbitControls.js"></script>
+		<script src="jsfiles/libs/dat.gui.min.js"></script>
+
+		<div id="info">
+			<a href="http://threejs.org" target="_blank">three.js</a> <br/>
+			 <a href="http://jmi.ac.in/">Jamia Millia Islamia</a><br/>
+		</div>
+
+		<script>
+
+			var controls, camera, scene, renderer;
+			var cameraCube, sceneCube ,sceneCube2,sceneCube3,sceneCube4;
+			var textureEquirec, textureCube, textureSphere,textureCube2,textureCube3,textureCube4;
+			var textureEquirec2,textureEquirec3,textureEquirec4,textureEquirec5,textureEquirec6,textureEquirec7,textureEquirec8,textureEquirec9;
+			var cubeMesh, sphereMesh;
+			var sphereMaterial;
+			var refract;
+
+			init();
+			animate();
+
+			function init() {
+
+				// CAMERAS
+
+				camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 1, 100000 );
+				camera.position.set( 0, 0, 1000 );
+				cameraCube = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 1, 100000 );
+
+				controls = new THREE.OrbitControls( camera );
+				controls.minDistance = 500;
+				controls.maxDistance = 2500;
+				
+				
+				/*controls = new THREE.FlyControls( camera );
+
+				controls.movementSpeed = 1000;
+				controls.domElement = container;
+				controls.rollSpeed = Math.PI / 24;
+				controls.autoForward = false;
+				controls.dragToLook = false;
+				*/
+
+				// SCENE
+
+				scene = new THREE.Scene();
+				sceneCube = new THREE.Scene();
+				// Lights
+
+				var ambient = new THREE.AmbientLight( 0xffffff );
+				scene.add( ambient );
+
+				// Textures
+
+				var r = "jamia/";
+				var urls = [ r + "posx.jpg", r + "negx.jpg",
+							 r + "posy.jpg", r + "negy.jpg",
+							 r + "posz.jpg", r + "negz.jpg" ];
+
+				r="hostel/";
+				var urls2 = [ r + "x1.jpg", r + "y1.jpg",
+							 r + "z1.jpg", r + "z2.jpg",
+							 r + "y2.jpg", r + "x2.jpg" ];
+
+
+				r = "fourth/";
+				var urls3 = [ r + "negx.jpg", r + "posx.jpg",
+							 r + "posy.jpg", r + "negy.jpg",
+							 r + "posz.jpg", r + "negz.jpg" ];
+
+				var r = "cube4/";
+				var urls4 = [ r + "posxb.jpg", r + "negxb.jpg",
+							 r + "posy.jpg", r + "negy.jpg",
+							 r + "poszb.jpg", r + "negzb.jpg" ];
+		 
+
+					 var r = "jamia/";
+					var urls = [ r + "virtualTour.png", r + "virtualTour.png",
+							 r + "virtualTour.png", r + "virtualTour.png",
+							 r + "virtualTour.png", r + "virtualTour.png" ];
+
+
+				textureCube = THREE.ImageUtils.loadTextureCube( urls );
+				textureCube.format = THREE.RGBFormat;
+				textureCube.mapping = THREE.CubeReflectionMapping;
+
+				textureCube2 = THREE.ImageUtils.loadTextureCube( urls2 );
+				textureCube2.format = THREE.RGBFormat;
+				textureCube2.mapping = THREE.CubeReflectionMapping;
+
+				textureCube3 = THREE.ImageUtils.loadTextureCube( urls3 );
+				textureCube3.format = THREE.RGBFormat;
+				textureCube3.mapping = THREE.CubeReflectionMapping;
+
+				textureCube4 = THREE.ImageUtils.loadTextureCube( urls4);
+				textureCube4.format = THREE.RGBFormat;
+				textureCube4.mapping = THREE.CubeReflectionMapping;
+
+//--------------------------------------------------------------------------------------------------------
+				
+
+				textureEquirec = THREE.ImageUtils.loadTexture( "entrance.jpg" );
+				textureEquirec.format = THREE.RGBAFormat;
+				textureEquirec.mapping = THREE.EquirectangularReflectionMapping;
+				textureEquirec.magFilter = THREE.LinearFilter;
+				textureEquirec.minFilter = THREE.LinearMipMapLinearFilter;
+
+				textureSphere = THREE.ImageUtils.loadTexture( "metal.jpg" );
+				textureSphere.mapping = THREE.SphericalReflectionMapping;
+
+
+				textureEquirec2 = THREE.ImageUtils.loadTexture( "mainGate.jpg" );
+				textureEquirec2.format = THREE.RGBAFormat;
+				textureEquirec2.mapping = THREE.EquirectangularReflectionMapping;
+				textureEquirec2.magFilter = THREE.LinearFilter;
+				textureEquirec2.minFilter = THREE.LinearMipMapLinearFilter;
+
+				
+				textureEquirec3 = THREE.ImageUtils.loadTexture( "deanOffice.jpg" );
+				textureEquirec3.format = THREE.RGBAFormat;
+				textureEquirec3.mapping = THREE.EquirectangularReflectionMapping;
+				textureEquirec3.magFilter = THREE.LinearFilter;
+				textureEquirec3.minFilter = THREE.LinearMipMapLinearFilter;
+
+
+				textureEquirec4 = THREE.ImageUtils.loadTexture( "canteen.jpg" );
+				textureEquirec4.format = THREE.RGBAFormat;
+				textureEquirec4.mapping = THREE.EquirectangularReflectionMapping;
+				textureEquirec4.magFilter = THREE.LinearFilter;
+				textureEquirec4.minFilter = THREE.LinearMipMapLinearFilter;
+
+
+				textureEquirec5 = THREE.ImageUtils.loadTexture( "readingRoom.jpg" );
+				textureEquirec5.format = THREE.RGBAFormat;
+				textureEquirec5.mapping = THREE.EquirectangularReflectionMapping;
+				textureEquirec5.magFilter = THREE.LinearFilter;
+				textureEquirec5.minFilter = THREE.LinearMipMapLinearFilter;
+
+
+				textureEquirec6 = THREE.ImageUtils.loadTexture( "classroom.jpg" );
+				textureEquirec6.format = THREE.RGBAFormat;
+				textureEquirec6.mapping = THREE.EquirectangularReflectionMapping;
+				textureEquirec6.magFilter = THREE.LinearFilter;
+				textureEquirec6.minFilter = THREE.LinearMipMapLinearFilter;
+
+
+				textureEquirec7 = THREE.ImageUtils.loadTexture( "office.jpg" );
+				textureEquirec7.format = THREE.RGBAFormat;
+				textureEquirec7.mapping = THREE.EquirectangularReflectionMapping;
+				textureEquirec7.magFilter = THREE.LinearFilter;
+				textureEquirec7.minFilter = THREE.LinearMipMapLinearFilter;
+
+
+				textureEquirec8 = THREE.ImageUtils.loadTexture( "aeroplane.jpg" );
+				textureEquirec8.format = THREE.RGBAFormat;
+				textureEquirec8.mapping = THREE.EquirectangularReflectionMapping;
+				textureEquirec8.magFilter = THREE.LinearFilter;
+				textureEquirec8.minFilter = THREE.LinearMipMapLinearFilter;
+
+
+				textureEquirec9 = THREE.ImageUtils.loadTexture( "parking.jpg" );
+				textureEquirec9.format = THREE.RGBAFormat;
+				textureEquirec9.mapping = THREE.EquirectangularReflectionMapping;
+				textureEquirec9.magFilter = THREE.LinearFilter;
+				textureEquirec9.minFilter = THREE.LinearMipMapLinearFilter;
+
+				// Materials
+				var equirectShader = THREE.ShaderLib[ "equirect" ];
+				var equirectMaterial = new THREE.ShaderMaterial( {
+					fragmentShader: equirectShader.fragmentShader,
+					vertexShader: equirectShader.vertexShader,
+					uniforms: equirectShader.uniforms,
+					depthWrite: false,
+					side: THREE.BackSide
+				} );
+				equirectMaterial.uniforms[ "tEquirect" ].value = textureEquirec;
+			
+
+				var equirectMaterial2 = new THREE.ShaderMaterial( {
+					fragmentShader: equirectShader.fragmentShader,
+					vertexShader: equirectShader.vertexShader,
+					uniforms: equirectShader.uniforms,
+					depthWrite: false,
+					side: THREE.BackSide
+				} );
+				equirectMaterial2.uniforms[ "tEquirect" ].value = textureEquirec2;
+				
+
+				var equirectMaterial3 = new THREE.ShaderMaterial( {
+					fragmentShader: equirectShader.fragmentShader,
+					vertexShader: equirectShader.vertexShader,
+					uniforms: equirectShader.uniforms,
+					depthWrite: false,
+					side: THREE.BackSide
+				} );
+				equirectMaterial3.uniforms[ "tEquirect" ].value = textureEquirec3;
+
+
+				var equirectMaterial4 = new THREE.ShaderMaterial( {
+					fragmentShader: equirectShader.fragmentShader,
+					vertexShader: equirectShader.vertexShader,
+					uniforms: equirectShader.uniforms,
+					depthWrite: false,
+					side: THREE.BackSide
+				} );
+				equirectMaterial4.uniforms[ "tEquirect" ].value = textureEquirec4;
+				
+
+				var equirectMaterial5 = new THREE.ShaderMaterial( {
+					fragmentShader: equirectShader.fragmentShader,
+					vertexShader: equirectShader.vertexShader,
+					uniforms: equirectShader.uniforms,
+					depthWrite: false,
+					side: THREE.BackSide
+				} );
+				equirectMaterial5.uniforms[ "tEquirect" ].value = textureEquirec5;
+
+
+				var equirectMaterial6 = new THREE.ShaderMaterial( {
+					fragmentShader: equirectShader.fragmentShader,
+					vertexShader: equirectShader.vertexShader,
+					uniforms: equirectShader.uniforms,
+					depthWrite: false,
+					side: THREE.BackSide
+				} );
+
+				equirectMaterial6.uniforms[ "tEquirect" ].value = textureEquirec6;
+
+
+				var equirectMaterial7 = new THREE.ShaderMaterial( {
+					fragmentShader: equirectShader.fragmentShader,
+					vertexShader: equirectShader.vertexShader,
+					uniforms: equirectShader.uniforms,
+					depthWrite: false,
+					side: THREE.BackSide
+				} );
+				equirectMaterial7.uniforms[ "tEquirect" ].value = textureEquirec7;
+
+//------------------------------------------------------------------------------------
+
+				var cubeShader = THREE.ShaderLib[ "cube" ];
+				var cubeMaterial = new THREE.ShaderMaterial( {
+					fragmentShader: cubeShader.fragmentShader,
+					vertexShader: cubeShader.vertexShader,
+					uniforms: cubeShader.uniforms,
+					depthWrite: false,
+					side: THREE.BackSide
+				} );
+				cubeMaterial.uniforms[ "tCube" ].value = textureCube;
+
+				cubeMesh = new THREE.Mesh( new THREE.BoxGeometry( 300, 300, 300 ), cubeMaterial );
+				sceneCube.add( cubeMesh );
+
+		        var cubeShader2 = THREE.ShaderLib[ "cube" ];
+				var cubeMaterial2 = new THREE.ShaderMaterial( {
+					fragmentShader: cubeShader2.fragmentShader,
+					vertexShader: cubeShader2.vertexShader,
+					uniforms: cubeShader2.uniforms,
+					depthWrite: false,
+					side: THREE.BackSide
+				} );
+		
+				//cubeMaterial2.uniforms[ "tCube" ].value = textureCube2;
+		
+					       var cubeShader3 = THREE.ShaderLib[ "cube" ];
+				var cubeMaterial3 = new THREE.ShaderMaterial( {
+					fragmentShader: cubeShader3.fragmentShader,
+					vertexShader: cubeShader3.vertexShader,
+					uniforms: cubeShader3.uniforms,
+					depthWrite: false,
+					side: THREE.BackSide
+				} );
+		
+
+				  var cubeShader4 = THREE.ShaderLib[ "cube" ];
+				var cubeMaterial4 = new THREE.ShaderMaterial( {
+					fragmentShader: cubeShader4.fragmentShader,
+					vertexShader: cubeShader4.vertexShader,
+					uniforms: cubeShader4.uniforms,
+					depthWrite: false,
+					side: THREE.BackSide
+				} );
+				
+
+				// Skybox
+
+
+
+				//cubeMesh2 = new THREE.Mesh( new THREE.BoxGeometry( 300, 300, 300 ), cubeMaterial2 );
+				//sceneCube2.add( cubeMesh2 );
+				//
+
+				var geometry = new THREE.SphereGeometry( 10, 10, 10 );
+				sphereMaterial = new THREE.MeshLambertMaterial( { envMap: textureCube } );
+				sphereMesh = new THREE.Mesh( geometry, sphereMaterial );
+
+				scene.add( sphereMesh );
+
+				//
+
+				renderer = new THREE.WebGLRenderer();
+				renderer.autoClear = false;
+				renderer.setPixelRatio( window.devicePixelRatio );
+				renderer.setSize( window.innerWidth, window.innerHeight );
+				renderer.setFaceCulling( THREE.CullFaceNone );
+				document.body.appendChild( renderer.domElement );
+
+				//
+
+				var params = {
+					Cube1: function () {
+					
+					cubeShader = THREE.ShaderLib[ "cube" ];
+					cubeMaterial = new THREE.ShaderMaterial( {
+					fragmentShader: cubeShader.fragmentShader,
+					vertexShader: cubeShader.vertexShader,
+					uniforms: cubeShader.uniforms,
+					depthWrite: false,
+					side: THREE.BackSide
+				} );
+				
+				cubeMaterial.uniforms[ "tCube" ].value = textureCube;
+				//cubeMesh = new THREE.Mesh( new THREE.BoxGeometry( 300, 300, 300 ), cubeMaterial );
+				sceneCube.add( cubeMesh );
+					
+						cubeMesh.material = cubeMaterial;
+						cubeMesh.visible = true;
+						sphereMaterial.envMap = textureCube;
+						sphereMaterial.needsUpdate = true;
+					},
+					Equirectangular1: function () {
+
+					equirectShader = THREE.ShaderLib[ "equirect" ];
+				 equirectMaterial = new THREE.ShaderMaterial( {
+					fragmentShader: equirectShader.fragmentShader,
+					vertexShader: equirectShader.vertexShader,
+					uniforms: equirectShader.uniforms,
+					depthWrite: false,
+					side: THREE.BackSide
+				} );
+				equirectMaterial.uniforms[ "tEquirect" ].value = textureEquirec;
+
+						cubeMesh.material = equirectMaterial;
+						cubeMesh.visible = true;
+						sphereMaterial.envMap = textureEquirec;
+						sphereMaterial.needsUpdate = true;
+
+					},
+					Equirectangular2: function () {
+						equirectShader2 = THREE.ShaderLib[ "equirect" ];
+					 equirectMaterial2 = new THREE.ShaderMaterial( {
+					fragmentShader: equirectShader2.fragmentShader,
+					vertexShader: equirectShader2.vertexShader,
+					uniforms: equirectShader2.uniforms,
+					depthWrite: false,
+					side: THREE.BackSide
+				} );
+				equirectMaterial2.uniforms[ "tEquirect" ].value = textureEquirec2;
+						cubeMesh.material = equirectMaterial2;
+						cubeMesh.visible = true;
+						sphereMaterial.envMap = textureEquirec2;
+						sphereMaterial.needsUpdate = true;
+						
+					},
+					Equirectangular3: function () {
+						equirectShader3 = THREE.ShaderLib[ "equirect" ];
+					equirectMaterial3 = new THREE.ShaderMaterial( {
+					fragmentShader: equirectShader3.fragmentShader,
+					vertexShader: equirectShader3.vertexShader,
+					uniforms: equirectShader3.uniforms,
+					depthWrite: false,
+					side: THREE.BackSide
+				} );
+				equirectMaterial3.uniforms[ "tEquirect" ].value = textureEquirec3;
+						cubeMesh.material = equirectMaterial3;
+						cubeMesh.visible = true;
+						sphereMaterial.envMap = textureEquirec3;
+						sphereMaterial.needsUpdate = true;
+						
+					},
+					Equirectangular4: function () {
+						equirectShader4 = THREE.ShaderLib[ "equirect" ];
+				 equirectMaterial4 = new THREE.ShaderMaterial( {
+					fragmentShader: equirectShader4.fragmentShader,
+					vertexShader: equirectShader4.vertexShader,
+					uniforms: equirectShader4.uniforms,
+					depthWrite: false,
+					side: THREE.BackSide
+				} );
+				equirectMaterial4.uniforms[ "tEquirect" ].value = textureEquirec4;
+						cubeMesh.material = equirectMaterial4;
+						cubeMesh.visible = true;
+						sphereMaterial.envMap = textureEquirec4;
+						sphereMaterial.needsUpdate = true;
+						
+					},
+					Equirectangular5: function () {
+						equirectShader5 = THREE.ShaderLib[ "equirect" ];
+					equirectMaterial5 = new THREE.ShaderMaterial( {
+					fragmentShader: equirectShader5.fragmentShader,
+					vertexShader: equirectShader5.vertexShader,
+					uniforms: equirectShader5.uniforms,
+					depthWrite: false,
+					side: THREE.BackSide
+				} );
+				equirectMaterial5.uniforms[ "tEquirect" ].value = textureEquirec5;
+						cubeMesh.material = equirectMaterial5;
+						cubeMesh.visible = true;
+						sphereMaterial.envMap = textureEquirec5;
+						sphereMaterial.needsUpdate = true;
+						
+					},
+					Equirectangular6: function () {
+						equirectShader6 = THREE.ShaderLib[ "equirect" ];
+					equirectMaterial6 = new THREE.ShaderMaterial( {
+					fragmentShader: equirectShader6.fragmentShader,
+					vertexShader: equirectShader6.vertexShader,
+					uniforms: equirectShader6.uniforms,
+					depthWrite: false,
+					side: THREE.BackSide
+				} );
+				equirectMaterial6.uniforms[ "tEquirect" ].value = textureEquirec6;
+						cubeMesh.material = equirectMaterial6;
+						cubeMesh.visible = true;
+						sphereMaterial.envMap = textureEquirec6;
+						sphereMaterial.needsUpdate = true;
+						
+					},
+					Equirectangular7: function () {
+						equirectShader7 = THREE.ShaderLib[ "equirect" ];
+				equirectMaterial7 = new THREE.ShaderMaterial( {
+					fragmentShader: equirectShader7.fragmentShader,
+					vertexShader: equirectShader7.vertexShader,
+					uniforms: equirectShader7.uniforms,
+					depthWrite: false,
+					side: THREE.BackSide
+				} );
+				equirectMaterial7.uniforms[ "tEquirect" ].value = textureEquirec7;
+						cubeMesh.material = equirectMaterial7;
+						cubeMesh.visible = true;
+						sphereMaterial.envMap = textureEquirec7;
+						sphereMaterial.needsUpdate = true;
+						
+					},
+					Equirectangular8: function () {
+						equirectShader8 = THREE.ShaderLib[ "equirect" ];
+				equirectMaterial8 = new THREE.ShaderMaterial( {
+					fragmentShader: equirectShader8.fragmentShader,
+					vertexShader: equirectShader8.vertexShader,
+					uniforms: equirectShader8.uniforms,
+					depthWrite: false,
+					side: THREE.BackSide
+				} );
+				equirectMaterial8.uniforms[ "tEquirect" ].value = textureEquirec8;
+						cubeMesh.material = equirectMaterial8;
+						cubeMesh.visible = true;
+						sphereMaterial.envMap = textureEquirec8;
+						sphereMaterial.needsUpdate = true;
+						
+					},
+					Equirectangular9: function () {
+						equirectShader9 = THREE.ShaderLib[ "equirect" ];
+				equirectMaterial9 = new THREE.ShaderMaterial( {
+					fragmentShader: equirectShader9.fragmentShader,
+					vertexShader: equirectShader9.vertexShader,
+					uniforms: equirectShader9.uniforms,
+					depthWrite: false,
+					side: THREE.BackSide
+				} );
+				equirectMaterial9.uniforms[ "tEquirect" ].value = textureEquirec9;
+						cubeMesh.material = equirectMaterial9;
+						cubeMesh.visible = true;
+						sphereMaterial.envMap = textureEquirec9;
+						sphereMaterial.needsUpdate = true;
+						
+					},
+
+					Spherical: function () {
+						cubeMesh.visible = false;
+						sphereMaterial.envMap = textureSphere;
+						sphereMaterial.needsUpdate = true;
+					},
+					Cube2: function () {
+					
+					cubeShader2 = THREE.ShaderLib[ "cube" ];
+					cubeMaterial2 = new THREE.ShaderMaterial( {
+					fragmentShader: cubeShader2.fragmentShader,
+					vertexShader: cubeShader2.vertexShader,
+					uniforms: cubeShader2.uniforms,
+					depthWrite: false,
+					side: THREE.BackSide
+				} );
+				cubeMaterial2.uniforms[ "tCube" ].value = textureCube2;
+				//cubeMesh = new THREE.Mesh( new THREE.BoxGeometry( 300, 300, 300 ), cubeMaterial );
+				sceneCube.add( cubeMesh );					
+
+
+
+						cubeMesh.material = cubeMaterial2;
+						cubeMesh.visible = true;
+						//sphereMaterial.envMap = textureCube2;
+						//sphereMaterial.needsUpdate = true;
+					},
+
+					Cube4: function () {
+					
+					cubeShader4 = THREE.ShaderLib[ "cube" ];
+					cubeMaterial4 = new THREE.ShaderMaterial( {
+					fragmentShader: cubeShader4.fragmentShader,
+					vertexShader: cubeShader4.vertexShader,
+					uniforms: cubeShader4.uniforms,
+					depthWrite: false,
+					side: THREE.BackSide
+				} );
+				cubeMaterial4.uniforms[ "tCube" ].value = textureCube4;
+				//cubeMesh = new THREE.Mesh( new THREE.BoxGeometry( 300, 300, 300 ), cubeMaterial );
+				sceneCube.add( cubeMesh );					
+
+
+
+						cubeMesh.material = cubeMaterial4;
+						cubeMesh.visible = true;
+						//sphereMaterial.envMap = textureCube2;
+						//sphereMaterial.needsUpdate = true;
+					},
+
+					Cube3: function () {
+					
+					cubeShader3 = THREE.ShaderLib[ "cube" ];
+					cubeMaterial3 = new THREE.ShaderMaterial( {
+					fragmentShader: cubeShader3.fragmentShader,
+					vertexShader: cubeShader3.vertexShader,
+					uniforms: cubeShader3.uniforms,
+					depthWrite: false,
+					side: THREE.BackSide
+				} );
+				cubeMaterial3.uniforms[ "tCube" ].value = textureCube3;
+				//cubeMesh = new THREE.Mesh( new THREE.BoxGeometry( 300, 300, 300 ), cubeMaterial );
+				sceneCube.add( cubeMesh );					
+
+
+
+						cubeMesh.material = cubeMaterial3;
+						cubeMesh.visible = true;
+						//sphereMaterial.envMap = textureCube2;
+						//sphereMaterial.needsUpdate = true;
+					},
+					Refraction: false
+				};
+
+				var gui = new dat.GUI();
+				//gui.add( params, 'Cube1' );
+				gui.add( params, 'Equirectangular1' );
+				//gui.add( params, 'Spherical' );
+				gui.add( params, 'Equirectangular2' );
+				gui.add( params, 'Equirectangular3' );
+				gui.add( params, 'Equirectangular4' );
+				gui.add( params, 'Equirectangular5' );
+				gui.add( params, 'Equirectangular6' );
+				gui.add( params, 'Equirectangular7' );
+				gui.add( params, 'Equirectangular8' );
+				gui.add( params, 'Equirectangular9' );
+
+
+				//gui.add(params,'Cube2');
+				//gui.add(params,'Cube3');
+				//gui.add(params,'Cube4');
+
+				/*gui.add( params, 'Refraction' ).onChange( function( value ) {
+
+					if ( value ) {
+
+						textureEquirec.mapping = THREE.EquirectangularRefractionMapping;
+						textureCube.mapping = THREE.CubeRefractionMapping;
+
+					} else {
+
+						textureEquirec.mapping = THREE.EquirectangularReflectionMapping;
+						textureCube.mapping = THREE.CubeReflectionMapping;
+
+					}
+
+					sphereMaterial.needsUpdate = true;
+
+				} );
+				*/
+				gui.open();
+
+				window.addEventListener( 'resize', onWindowResize, false );
+
+			}
+
+			function onWindowResize() {
+
+				camera.aspect = window.innerWidth / window.innerHeight;
+				camera.updateProjectionMatrix();
+
+				cameraCube.aspect = window.innerWidth / window.innerHeight;
+				cameraCube.updateProjectionMatrix();
+
+				renderer.setSize( window.innerWidth, window.innerHeight );
+
+			}
+
+			//
+
+			function animate() {
+
+				requestAnimationFrame( animate );
+
+				render();
+
+				controls.update();
+
+			}
+
+			function render() {
+
+				var timer = -0.0002 * Date.now();
+				//var delta = clock.getDelta();
+				camera.lookAt( scene.position );
+				cameraCube.rotation.copy( camera.rotation );
+
+
+				renderer.render( sceneCube, cameraCube );
+				renderer.render( scene, camera );
+
+				//controls.movementSpeed = 0.33 ;
+				//controls.update( delta );
+
+			}
+
+		</script>
+
+	</body>
+</html>
+

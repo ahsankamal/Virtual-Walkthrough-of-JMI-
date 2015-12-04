@@ -37,8 +37,8 @@
 		<script>
 
 			var controls, camera, scene, renderer;
-			var cameraCube, sceneCube ,sceneCube2,sceneCube3;
-			var textureEquirec, textureCube, textureSphere,textureCube2,textureCube3;
+			var cameraCube, sceneCube ,sceneCube2,sceneCube3,sceneCube4;
+			var textureEquirec, textureCube, textureSphere,textureCube2,textureCube3,textureCube4;
 			var cubeMesh, sphereMesh;
 			var sphereMaterial;
 			var refract;
@@ -85,9 +85,9 @@
 							 r + "posz.jpg", r + "negz.jpg" ];
 
 				r="hostel/";
-				var urls2 = [ r + "p1.jpg", r + "n1.jpg",
-							 r + "n3.jpg", r + "p3.jpg",
-							 r + "p2.jpg", r + "n2.jpg" ];
+				var urls2 = [ r + "x1.jpg", r + "y1.jpg",
+							 r + "z1.jpg", r + "z2.jpg",
+							 r + "y2.jpg", r + "x2.jpg" ];
 
 
 				r = "fourth/";
@@ -95,6 +95,11 @@
 							 r + "posy.jpg", r + "negy.jpg",
 							 r + "posz.jpg", r + "negz.jpg" ];
 
+				var r = "cube4/";
+				var urls4 = [ r + "posxb.jpg", r + "negxb.jpg",
+							 r + "posy.jpg", r + "negy.jpg",
+							 r + "poszb.jpg", r + "negzb.jpg" ];
+		 
 
 				textureCube = THREE.ImageUtils.loadTextureCube( urls );
 				textureCube.format = THREE.RGBFormat;
@@ -108,8 +113,13 @@
 				textureCube3.format = THREE.RGBFormat;
 				textureCube3.mapping = THREE.CubeReflectionMapping;
 
+				textureCube4 = THREE.ImageUtils.loadTextureCube( urls4);
+				textureCube4.format = THREE.RGBFormat;
+				textureCube4.mapping = THREE.CubeReflectionMapping;
 
-				textureEquirec = THREE.ImageUtils.loadTexture( "2294472375_24a3b8ef46_o.jpg" );
+				
+
+				textureEquirec = THREE.ImageUtils.loadTexture( "entrance.jpg" );
 				textureEquirec.format = THREE.RGBAFormat;
 				textureEquirec.mapping = THREE.EquirectangularReflectionMapping;
 				textureEquirec.magFilter = THREE.LinearFilter;
@@ -132,6 +142,8 @@
 
 				equirectMaterial.uniforms[ "tEquirect" ].value = textureEquirec;
 			
+
+				
 				var cubeShader = THREE.ShaderLib[ "cube" ];
 				var cubeMaterial = new THREE.ShaderMaterial( {
 					fragmentShader: cubeShader.fragmentShader,
@@ -145,7 +157,7 @@
 				cubeMesh = new THREE.Mesh( new THREE.BoxGeometry( 300, 300, 300 ), cubeMaterial );
 				sceneCube.add( cubeMesh );
 
-		                var cubeShader2 = THREE.ShaderLib[ "cube" ];
+		        var cubeShader2 = THREE.ShaderLib[ "cube" ];
 				var cubeMaterial2 = new THREE.ShaderMaterial( {
 					fragmentShader: cubeShader2.fragmentShader,
 					vertexShader: cubeShader2.vertexShader,
@@ -166,7 +178,15 @@
 				} );
 		
 
-
+				  var cubeShader4 = THREE.ShaderLib[ "cube" ];
+				var cubeMaterial4 = new THREE.ShaderMaterial( {
+					fragmentShader: cubeShader4.fragmentShader,
+					vertexShader: cubeShader4.vertexShader,
+					uniforms: cubeShader4.uniforms,
+					depthWrite: false,
+					side: THREE.BackSide
+				} );
+				
 
 				// Skybox
 
@@ -194,7 +214,7 @@
 				//
 
 				var params = {
-					Cube: function () {
+					Cube1: function () {
 					
 					cubeShader = THREE.ShaderLib[ "cube" ];
 					cubeMaterial = new THREE.ShaderMaterial( {
@@ -246,6 +266,28 @@
 						//sphereMaterial.needsUpdate = true;
 					},
 
+					Cube4: function () {
+					
+					cubeShader4 = THREE.ShaderLib[ "cube" ];
+					cubeMaterial4 = new THREE.ShaderMaterial( {
+					fragmentShader: cubeShader4.fragmentShader,
+					vertexShader: cubeShader4.vertexShader,
+					uniforms: cubeShader4.uniforms,
+					depthWrite: false,
+					side: THREE.BackSide
+				} );
+				cubeMaterial4.uniforms[ "tCube" ].value = textureCube4;
+				//cubeMesh = new THREE.Mesh( new THREE.BoxGeometry( 300, 300, 300 ), cubeMaterial );
+				sceneCube.add( cubeMesh );					
+
+
+
+						cubeMesh.material = cubeMaterial4;
+						cubeMesh.visible = true;
+						//sphereMaterial.envMap = textureCube2;
+						//sphereMaterial.needsUpdate = true;
+					},
+
 					Cube3: function () {
 					
 					cubeShader3 = THREE.ShaderLib[ "cube" ];
@@ -271,11 +313,12 @@
 				};
 
 				var gui = new dat.GUI();
-				gui.add( params, 'Cube' );
+				gui.add( params, 'Cube1' );
 				gui.add( params, 'Equirectangular' );
-				gui.add( params, 'Spherical' );
+				//gui.add( params, 'Spherical' );
 				gui.add(params,'Cube2');
 				gui.add(params,'Cube3');
+				gui.add(params,'Cube4');
 
 				/*gui.add( params, 'Refraction' ).onChange( function( value ) {
 
