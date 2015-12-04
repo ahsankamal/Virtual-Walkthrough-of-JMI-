@@ -2,4 +2,4 @@
 Using three.js 
 
 Open this link:
-https://cdn.rawgit.com/ahsankamal/Virtual-Walkthrough-of-JMI-/master/myclg.html
+https://cdn.rawgit.com/ahsankamal/Virtual-Walkthrough-of-JMI-/master/jamiaMilliaIslamia.html
